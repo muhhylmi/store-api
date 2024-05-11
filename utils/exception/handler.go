@@ -1,25 +1,26 @@
-package helper
+package exception
 
 import (
 	"net/http"
 
 	"github.com/go-playground/validator/v10"
 	"github.com/muhhylmi/store-api/model/web"
+	"github.com/muhhylmi/store-api/utils/wrapper"
 )
 
 func ErrorHandler(writer http.ResponseWriter, request *http.Request, err interface{}) {
-	if notFoundError(writer, request, err) {
+	if NotFoundDataError(writer, request, err) {
 		return
 	}
 
-	if validationError(writer, request, err) {
+	if ValidationError(writer, request, err) {
 		return
 	}
 
-	internalServerError(writer, request, err)
+	InternalServerError(writer, request, err)
 }
 
-func validationError(writer http.ResponseWriter, request *http.Request, err interface{}) bool {
+func ValidationError(writer http.ResponseWriter, request *http.Request, err interface{}) bool {
 	exception, ok := err.(validator.ValidationErrors)
 	if ok {
 		writer.Header().Set("Content-Type", "application/json")
@@ -31,7 +32,7 @@ func validationError(writer http.ResponseWriter, request *http.Request, err inte
 			Data:   exception.Error(),
 		}
 
-		WriteToResponseBody(writer, webResponse)
+		wrapper.WriteToResponseBody(writer, webResponse)
 		return true
 	} else {
 		return false
@@ -39,7 +40,7 @@ func validationError(writer http.ResponseWriter, request *http.Request, err inte
 
 }
 
-func notFoundError(writer http.ResponseWriter, request *http.Request, err interface{}) bool {
+func NotFoundDataError(writer http.ResponseWriter, request *http.Request, err interface{}) bool {
 	exception, ok := err.(NotFoundError)
 	if ok {
 		writer.Header().Set("Content-Type", "application/json")
@@ -51,7 +52,7 @@ func notFoundError(writer http.ResponseWriter, request *http.Request, err interf
 			Data:   exception.Error,
 		}
 
-		WriteToResponseBody(writer, webResponse)
+		wrapper.WriteToResponseBody(writer, webResponse)
 		return true
 	} else {
 		return false
@@ -59,7 +60,7 @@ func notFoundError(writer http.ResponseWriter, request *http.Request, err interf
 
 }
 
-func internalServerError(writer http.ResponseWriter, request *http.Request, err interface{}) {
+func InternalServerError(writer http.ResponseWriter, request *http.Request, err interface{}) {
 	writer.Header().Set("Content-Type", "application/json")
 	writer.WriteHeader(http.StatusInternalServerError)
 
@@ -69,5 +70,5 @@ func internalServerError(writer http.ResponseWriter, request *http.Request, err 
 		Data:   err,
 	}
 
-	WriteToResponseBody(writer, webResponse)
+	wrapper.WriteToResponseBody(writer, webResponse)
 }

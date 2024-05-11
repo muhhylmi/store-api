@@ -1,4 +1,4 @@
-package helper
+package wrapper
 
 import (
 	"encoding/json"
@@ -8,12 +8,16 @@ import (
 func ReadJsonFromRequest(request *http.Request, result interface{}) {
 	decoder := json.NewDecoder(request.Body)
 	err := decoder.Decode(result)
-	PanicIfError(err)
+	if err != nil {
+		panic(err)
+	}
 }
 
 func WriteToResponseBody(writer http.ResponseWriter, response interface{}) {
 	writer.Header().Add("Content-Type", "application/json")
 	enconder := json.NewEncoder(writer)
 	err := enconder.Encode(response)
-	PanicIfError(err)
+	if err != nil {
+		panic(err)
+	}
 }

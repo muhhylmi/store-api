@@ -1,4 +1,4 @@
-package helper
+package exception
 
 type NotFoundError struct {
 	Error string
@@ -6,4 +6,10 @@ type NotFoundError struct {
 
 func NewNotFoundError(error string) NotFoundError {
 	return NotFoundError{Error: error}
+}
+
+func PanicIfError(err error) {
+	if err != nil {
+		panic(err)
+	}
 }

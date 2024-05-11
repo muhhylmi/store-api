@@ -6,8 +6,10 @@ import (
 	_ "github.com/lib/pq"
 	"github.com/muhhylmi/store-api/app"
 	"github.com/muhhylmi/store-api/controller"
-	"github.com/muhhylmi/store-api/helper"
-	"github.com/muhhylmi/store-api/middleware"
+	"github.com/muhhylmi/store-api/utils/databases"
+	"github.com/muhhylmi/store-api/utils/logger"
+	"github.com/muhhylmi/store-api/utils/middleware"
+
 	"github.com/muhhylmi/store-api/repository"
 	"github.com/muhhylmi/store-api/service"
 
@@ -15,13 +17,15 @@ import (
 )
 
 func main() {
-	db := helper.NewDB()
+	logger := logger.Newlogger()
+	db := databases.NewDB(logger)
 	validate := validator.New()
+	l := logger.LogWithContext("main", "init")
 
 	// product domain
-	productRepository := repository.NewCategoryRepository()
-	productService := service.NewProductService(productRepository, db, validate)
-	productController := controller.NewProductController(productService)
+	productRepository := repository.NewCategoryRepository(logger)
+	productService := service.NewProductService(logger, productRepository, db, validate)
+	productController := controller.NewProductController(logger, productService)
 
 	router := app.NewRouter(productController)
 	server := http.Server{
@@ -29,6 +33,13 @@ func main() {
 		Handler: middleware.NewAuthMiddleware(router),
 	}
 
-	err := server.ListenAndServe()
-	helper.PanicIfError(err)
+	go func() {
+		err := server.ListenAndServe()
+		if err != nil {
+			l.Error(err)
+		}
+	}()
+
+	l.Info("Starting HTTP server on port 3000")
+	select {}
 }

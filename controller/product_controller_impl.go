@@ -5,24 +5,28 @@ import (
 	"strconv"
 
 	"github.com/julienschmidt/httprouter"
-	"github.com/muhhylmi/store-api/helper"
 	"github.com/muhhylmi/store-api/model/web"
 	"github.com/muhhylmi/store-api/service"
+	"github.com/muhhylmi/store-api/utils/exception"
+	"github.com/muhhylmi/store-api/utils/logger"
+	"github.com/muhhylmi/store-api/utils/wrapper"
 )
 
 type ProductControllerImpl struct {
+	Logger         *logger.Logger
 	ProductService service.ProductService
 }
 
-func NewProductController(ProductService service.ProductService) ProductController {
+func NewProductController(logger *logger.Logger, ProductService service.ProductService) ProductController {
 	return &ProductControllerImpl{
+		Logger:         logger,
 		ProductService: ProductService,
 	}
 }
 
 func (controller *ProductControllerImpl) Create(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
 	ProductCreateRequest := web.ProductCreateRequest{}
-	helper.ReadJsonFromRequest(request, &ProductCreateRequest)
+	wrapper.ReadJsonFromRequest(request, &ProductCreateRequest)
 
 	ProductResponse := controller.ProductService.Create(request.Context(), ProductCreateRequest)
 	webResponse := web.WebResponse{
@@ -31,16 +35,16 @@ func (controller *ProductControllerImpl) Create(writer http.ResponseWriter, requ
 		Data:   ProductResponse,
 	}
 
-	helper.WriteToResponseBody(writer, webResponse)
+	wrapper.WriteToResponseBody(writer, webResponse)
 }
 
 func (controller *ProductControllerImpl) Update(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
 	ProductUpdateRequest := web.ProductUpdateRequest{}
-	helper.ReadJsonFromRequest(request, &ProductUpdateRequest)
+	wrapper.ReadJsonFromRequest(request, &ProductUpdateRequest)
 
 	ProductId := params.ByName("ProductId")
 	id, err := strconv.Atoi(ProductId)
-	helper.PanicIfError(err)
+	exception.PanicIfError(err)
 	ProductUpdateRequest.Id = id
 
 	ProductResponse := controller.ProductService.Update(request.Context(), ProductUpdateRequest)
@@ -50,13 +54,13 @@ func (controller *ProductControllerImpl) Update(writer http.ResponseWriter, requ
 		Data:   ProductResponse,
 	}
 
-	helper.WriteToResponseBody(writer, webResponse)
+	wrapper.WriteToResponseBody(writer, webResponse)
 }
 
 func (controller *ProductControllerImpl) Delete(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
 	ProductId := params.ByName("ProductId")
 	id, err := strconv.Atoi(ProductId)
-	helper.PanicIfError(err)
+	exception.PanicIfError(err)
 
 	controller.ProductService.Delete(request.Context(), id)
 	webResponse := web.WebResponse{
@@ -64,13 +68,13 @@ func (controller *ProductControllerImpl) Delete(writer http.ResponseWriter, requ
 		Status: "OK",
 	}
 
-	helper.WriteToResponseBody(writer, webResponse)
+	wrapper.WriteToResponseBody(writer, webResponse)
 }
 
 func (controller *ProductControllerImpl) FindById(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
 	ProductId := params.ByName("ProductId")
 	id, err := strconv.Atoi(ProductId)
-	helper.PanicIfError(err)
+	exception.PanicIfError(err)
 
 	ProductResponse := controller.ProductService.FindById(request.Context(), id)
 	webResponse := web.WebResponse{
@@ -79,7 +83,7 @@ func (controller *ProductControllerImpl) FindById(writer http.ResponseWriter, re
 		Data:   ProductResponse,
 	}
 
-	helper.WriteToResponseBody(writer, webResponse)
+	wrapper.WriteToResponseBody(writer, webResponse)
 }
 
 func (controller *ProductControllerImpl) FindAll(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
@@ -90,5 +94,5 @@ func (controller *ProductControllerImpl) FindAll(writer http.ResponseWriter, req
 		Data:   ProductResponses,
 	}
 
-	helper.WriteToResponseBody(writer, webResponse)
+	wrapper.WriteToResponseBody(writer, webResponse)
 }

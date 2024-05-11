@@ -3,8 +3,8 @@ package middleware
 import (
 	"net/http"
 
-	"github.com/muhhylmi/store-api/helper"
 	"github.com/muhhylmi/store-api/model/web"
+	"github.com/muhhylmi/store-api/utils/wrapper"
 )
 
 type AuthMiddleware struct {
@@ -27,6 +27,7 @@ func (middleware *AuthMiddleware) ServeHTTP(writer http.ResponseWriter, request 
 			Status: "UNAUTHORIZED",
 		}
 
-		helper.WriteToResponseBody(writer, webResponse)
+		wrapper.WriteToResponseBody(writer, webResponse)
 	}
+
 }

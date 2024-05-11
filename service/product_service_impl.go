@@ -5,20 +5,24 @@ import (
 	"database/sql"
 
 	"github.com/go-playground/validator/v10"
-	"github.com/muhhylmi/store-api/helper"
 	"github.com/muhhylmi/store-api/model/domain"
 	"github.com/muhhylmi/store-api/model/web"
 	"github.com/muhhylmi/store-api/repository"
+	"github.com/muhhylmi/store-api/utils/databases"
+	"github.com/muhhylmi/store-api/utils/exception"
+	"github.com/muhhylmi/store-api/utils/logger"
 )
 
 type ProductServiceImpl struct {
+	Logger            *logger.Logger
 	ProductRepository repository.ProductRepository
 	DB                *sql.DB
 	Validate          *validator.Validate
 }
 
-func NewProductService(ProductRepository repository.ProductRepository, DB *sql.DB, validate *validator.Validate) ProductService {
+func NewProductService(logger *logger.Logger, ProductRepository repository.ProductRepository, DB *sql.DB, validate *validator.Validate) ProductService {
 	return &ProductServiceImpl{
+		Logger:            logger,
 		ProductRepository: ProductRepository,
 		DB:                DB,
 		Validate:          validate,
@@ -27,11 +31,11 @@ func NewProductService(ProductRepository repository.ProductRepository, DB *sql.D
 
 func (service *ProductServiceImpl) Create(ctx context.Context, request web.ProductCreateRequest) web.ProductResponse {
 	err := service.Validate.Struct(request)
-	helper.PanicIfError(err)
+	exception.PanicIfError(err)
 
 	tx, err := service.DB.Begin()
-	helper.PanicIfError(err)
-	defer helper.CommitOrRollback(tx)
+	exception.PanicIfError(err)
+	defer databases.CommitOrRollback(tx)
 
 	Product := domain.Product{
 		Name: request.Name,
@@ -43,15 +47,15 @@ func (service *ProductServiceImpl) Create(ctx context.Context, request web.Produ
 
 func (service *ProductServiceImpl) Update(ctx context.Context, request web.ProductUpdateRequest) web.ProductResponse {
 	err := service.Validate.Struct(request)
-	helper.PanicIfError(err)
+	exception.PanicIfError(err)
 
 	tx, err := service.DB.Begin()
-	helper.PanicIfError(err)
-	defer helper.CommitOrRollback(tx)
+	exception.PanicIfError(err)
+	defer databases.CommitOrRollback(tx)
 
 	Product, err := service.ProductRepository.FindById(ctx, tx, request.Id)
 	if err != nil {
-		panic(helper.NewNotFoundError(err.Error()))
+		panic(exception.NewNotFoundError(err.Error()))
 	}
 
 	Product.Name = request.Name
@@ -62,12 +66,12 @@ func (service *ProductServiceImpl) Update(ctx context.Context, request web.Produ
 
 func (service *ProductServiceImpl) Delete(ctx context.Context, ProductId int) {
 	tx, err := service.DB.Begin()
-	helper.PanicIfError(err)
-	defer helper.CommitOrRollback(tx)
+	exception.PanicIfError(err)
+	defer databases.CommitOrRollback(tx)
 
 	Product, err := service.ProductRepository.FindById(ctx, tx, ProductId)
 	if err != nil {
-		panic(helper.NewNotFoundError(err.Error()))
+		panic(exception.NewNotFoundError(err.Error()))
 	}
 
 	service.ProductRepository.Delete(ctx, tx, Product)
@@ -75,21 +79,25 @@ func (service *ProductServiceImpl) Delete(ctx context.Context, ProductId int) {
 
 func (service *ProductServiceImpl) FindById(ctx context.Context, ProductId int) web.ProductResponse {
 	tx, err := service.DB.Begin()
-	helper.PanicIfError(err)
-	defer helper.CommitOrRollback(tx)
+	exception.PanicIfError(err)
+	defer databases.CommitOrRollback(tx)
 
 	Product, err := service.ProductRepository.FindById(ctx, tx, ProductId)
 	if err != nil {
-		panic(helper.NewNotFoundError(err.Error()))
+		panic(exception.NewNotFoundError(err.Error()))
 	}
 
 	return web.ToProductRersponse(Product)
 }
 
 func (service *ProductServiceImpl) FindAll(ctx context.Context) []web.ProductResponse {
+	l := service.Logger.LogWithContext("service", "findAll")
 	tx, err := service.DB.Begin()
-	helper.PanicIfError(err)
-	defer helper.CommitOrRollback(tx)
+	if err != nil {
+		l.Error(err)
+		exception.PanicIfError(err)
+	}
+	defer databases.CommitOrRollback(tx)
 
 	categories := service.ProductRepository.FindAll(ctx, tx)
 

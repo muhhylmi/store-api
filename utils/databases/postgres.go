@@ -1,13 +1,20 @@
-package helper
+package databases
 
 import (
 	"database/sql"
 	"time"
+
+	"github.com/muhhylmi/store-api/utils/exception"
+	"github.com/muhhylmi/store-api/utils/logger"
 )
 
-func NewDB() *sql.DB {
+func NewDB(logger *logger.Logger) *sql.DB {
+	l := logger.LogWithContext("database", "postgres")
+
 	db, err := sql.Open("postgres", "postgresql://user:password@localhost/golang_store_db")
-	PanicIfError(err)
+	if err != nil {
+		l.Error(err)
+	}
 
 	db.SetConnMaxIdleTime(5)
 	db.SetMaxOpenConns(20)
@@ -21,10 +28,10 @@ func CommitOrRollback(tx *sql.Tx) {
 	err := recover()
 	if err != nil {
 		errorRollback := tx.Rollback()
-		PanicIfError(errorRollback)
+		exception.PanicIfError(errorRollback)
 		panic(err)
 	} else {
 		errorCommit := tx.Commit()
-		PanicIfError(errorCommit)
+		exception.PanicIfError(errorCommit)
 	}
 }

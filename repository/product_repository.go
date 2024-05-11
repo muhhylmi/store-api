@@ -5,9 +5,12 @@ import (
 	"database/sql"
 
 	"github.com/muhhylmi/store-api/model/domain"
+	"github.com/muhhylmi/store-api/utils/logger"
 )
 
-type ProductRepositoryImpl struct{}
+type ProductRepositoryImpl struct {
+	Logger *logger.Logger
+}
 
 type ProductRepository interface {
 	Save(ctx context.Context, tx *sql.Tx, Product domain.Product) domain.Product
@@ -17,6 +20,8 @@ type ProductRepository interface {
 	FindAll(ctx context.Context, tx *sql.Tx) []domain.Product
 }
 
-func NewCategoryRepository() ProductRepository {
-	return &ProductRepositoryImpl{}
+func NewCategoryRepository(logger *logger.Logger) ProductRepository {
+	return &ProductRepositoryImpl{
+		Logger: logger,
+	}
 }
