@@ -7,12 +7,12 @@ type ProductCreateRequest struct {
 }
 
 type ProductUpdateRequest struct {
-	Id   int    `validate:"required"`
+	Id   string `validate:"required"`
 	Name string `validate:"required,min=1,max=200" json:"name"`
 }
 
 type ProductResponse struct {
-	Id   int    `json:"id"`
+	Id   string `json:"id"`
 	Name string `json:"name"`
 }
 

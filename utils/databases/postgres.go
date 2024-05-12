@@ -1,37 +1,35 @@
 package databases
 
 import (
-	"database/sql"
 	"time"
 
-	"github.com/muhhylmi/store-api/utils/exception"
-	"github.com/muhhylmi/store-api/utils/logger"
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 )
 
-func NewDB(logger *logger.Logger) *sql.DB {
-	l := logger.LogWithContext("database", "postgres")
+var PostgresDB *gorm.DB
 
-	db, err := sql.Open("postgres", "postgresql://user:password@localhost/golang_store_db")
+func InitPostgres(params *DBServiceVar) (*gorm.DB, error) {
+	log := params.Logger.LogWithContext("dbConnection", "InitPostgres")
+	dsn := params.PostgresUri
+	PostgresDB, err := gorm.Open(postgres.Open(*dsn), &gorm.Config{
+		Logger: logger.New(
+			params.Logger.Logger,
+			logger.Config{
+				SlowThreshold:             100 * time.Millisecond,
+				LogLevel:                  logger.Info,
+				Colorful:                  true,
+				IgnoreRecordNotFoundError: false,
+				ParameterizedQueries:      false,
+			},
+		),
+	})
+
 	if err != nil {
-		l.Error(err)
+		log.Info("Connection Postgres is Failed")
+		return nil, err
 	}
-
-	db.SetConnMaxIdleTime(5)
-	db.SetMaxOpenConns(20)
-	db.SetConnMaxLifetime(60 * time.Minute)
-	db.SetConnMaxIdleTime(10 * time.Minute)
-
-	return db
-}
-
-func CommitOrRollback(tx *sql.Tx) {
-	err := recover()
-	if err != nil {
-		errorRollback := tx.Rollback()
-		exception.PanicIfError(errorRollback)
-		panic(err)
-	} else {
-		errorCommit := tx.Commit()
-		exception.PanicIfError(errorCommit)
-	}
+	log.Info("Success connect to postgres database")
+	return PostgresDB, nil
 }

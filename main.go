@@ -18,13 +18,24 @@ import (
 
 func main() {
 	logger := logger.Newlogger()
-	db := databases.NewDB(logger)
-	validate := validator.New()
 	l := logger.LogWithContext("main", "init")
 
+	uri := "postgres://postgres:password@localhost:5432/go-store"
+	db, err := databases.InitPostgres(&databases.DBServiceVar{
+		Logger:      logger,
+		PostgresUri: &uri,
+	})
+	if err != nil {
+		l.Error(err)
+		panic(err)
+	}
+	validate := validator.New()
+
 	// product domain
-	productRepository := repository.NewCategoryRepository(logger)
-	productService := service.NewProductService(logger, productRepository, db, validate)
+	productRepository := repository.NewCategoryRepository(logger, &databases.DBService{
+		Gorm: db,
+	})
+	productService := service.NewProductService(logger, productRepository, validate)
 	productController := controller.NewProductController(logger, productService)
 
 	router := app.NewRouter(productController)

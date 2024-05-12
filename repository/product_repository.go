@@ -2,26 +2,28 @@ package repository
 
 import (
 	"context"
-	"database/sql"
 
 	"github.com/muhhylmi/store-api/model/domain"
+	"github.com/muhhylmi/store-api/utils/databases"
 	"github.com/muhhylmi/store-api/utils/logger"
 )
 
 type ProductRepositoryImpl struct {
 	Logger *logger.Logger
+	DB     *databases.DBService
 }
 
 type ProductRepository interface {
-	Save(ctx context.Context, tx *sql.Tx, Product domain.Product) domain.Product
-	Update(ctx context.Context, tx *sql.Tx, Product domain.Product) domain.Product
-	Delete(ctx context.Context, tx *sql.Tx, Product domain.Product)
-	FindById(ctx context.Context, tx *sql.Tx, ProductId int) (domain.Product, error)
-	FindAll(ctx context.Context, tx *sql.Tx) []domain.Product
+	Save(ctx context.Context, Product domain.Product) (domain.Product, error)
+	Update(ctx context.Context, Product domain.Product) (domain.Product, error)
+	Delete(ctx context.Context, Product domain.Product) error
+	FindById(ctx context.Context, ProductId string) (*domain.Product, error)
+	FindAll(ctx context.Context) []*domain.Product
 }
 
-func NewCategoryRepository(logger *logger.Logger) ProductRepository {
+func NewCategoryRepository(logger *logger.Logger, db *databases.DBService) ProductRepository {
 	return &ProductRepositoryImpl{
 		Logger: logger,
+		DB:     db,
 	}
 }
