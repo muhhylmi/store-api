@@ -49,7 +49,7 @@ func main() {
 	router := app.NewRouter(productController, userController)
 	server := http.Server{
 		Addr:    fmt.Sprintf("%1s:%2s", config.HOST, config.PORT),
-		Handler: middleware.NewAuthMiddleware(router),
+		Handler: middleware.NewAuthMiddleware(router, config),
 	}
 
 	go func() {

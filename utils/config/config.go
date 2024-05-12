@@ -19,5 +19,6 @@ func GetConfig() *Configurations {
 		BASIC_AUTH_USERNAME: os.Getenv("BASIC_AUTH_USERNAME"),
 		BASIC_AUTH_PASSWORD: os.Getenv("BASIC_AUTH_PASSWORD"),
 		JWT_SECRET_KEY:      os.Getenv("JWT_SECRET_KEY"),
+		API_KEY:             os.Getenv("API_KEY"),
 	}
 }

@@ -12,7 +12,7 @@ import (
 type ClaimToken struct {
 	UserId   string `json:"userId"`
 	Username string `json:"username"`
-	Gender   string `json:"gender"`
+	Role     string `json:"role"`
 }
 
 func CreateToken(user *domain.Users, config *config.Configurations) (string, error) {
@@ -51,7 +51,7 @@ func ValidateJwt(tokenString string, config *config.Configurations) (*ClaimToken
 	tokenClaim := ClaimToken{
 		UserId:   token.Claims.(jwt.MapClaims)["id"].(string),
 		Username: token.Claims.(jwt.MapClaims)["username"].(string),
-		Gender:   token.Claims.(jwt.MapClaims)["role"].(string),
+		Role:     token.Claims.(jwt.MapClaims)["role"].(string),
 	}
 	return &tokenClaim, nil
 }
