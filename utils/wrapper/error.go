@@ -37,12 +37,10 @@ func ValidationError(writer http.ResponseWriter, request *http.Request, err inte
 	var message string
 	if ok {
 		for _, err := range exception {
-			fmt.Println("====== err", err)
 			fieldName := err.Field()
 			tagName := err.Tag()
 			paramValue := err.Param()
 			message = fmt.Sprintf("Field '%s' failed validation for tag '%s' with parameter '%s'", fieldName, tagName, paramValue)
-			fmt.Println(message)
 			// Anda dapat menggunakan informasi ini untuk melakukan penanganan error lebih lanjut
 		}
 

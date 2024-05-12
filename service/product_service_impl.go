@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/go-playground/validator/v10"
+	"github.com/google/uuid"
 	"github.com/muhhylmi/store-api/model/domain"
 	"github.com/muhhylmi/store-api/model/web"
 	"github.com/muhhylmi/store-api/repository"
@@ -27,17 +28,6 @@ func NewProductService(logger *logger.Logger, ProductRepository repository.Produ
 }
 
 func (service *ProductServiceImpl) Create(ctx context.Context, request web.ProductCreateRequest) web.ProductResponse {
-	// err := service.Validate.Struct(request)
-	// wrapper.PanicIfError(err)
-
-	// tx, err := service.DB.Begin()
-	// wrapper.PanicIfError(err)
-	// defer databases.CommitOrRollback(tx)
-
-	// Product := domain.Product{
-	// 	Name: request.Name,
-	// }
-	// Product = service.ProductRepository.Save(ctx, tx, Product)
 	l := service.Logger.LogWithContext("product_service", "Create")
 
 	err := service.Validate.Struct(request)
@@ -46,7 +36,10 @@ func (service *ProductServiceImpl) Create(ctx context.Context, request web.Produ
 		exception.PanicIfError(err)
 	}
 	product := domain.Product{
-		Name: request.Name,
+		BaseModel: domain.BaseModel{
+			ID: uuid.NewString(),
+		},
+		ProductName: request.Name,
 	}
 	result, err := service.ProductRepository.Save(ctx, product)
 	if err != nil {
@@ -90,14 +83,6 @@ func (service *ProductServiceImpl) Create(ctx context.Context, request web.Produ
 // }
 
 func (service *ProductServiceImpl) FindById(ctx context.Context, productId string) web.ProductResponse {
-	// tx, err := service.DB.Begin()
-	// wrapper.PanicIfError(err)
-	// defer databases.CommitOrRollback(tx)
-
-	// Product, err := service.ProductRepository.FindById(ctx, tx, productId)
-	// if err != nil {
-	// 	panic(wrapper.NewNotFoundError(err.Error()))
-	// }
 	l := service.Logger.LogWithContext("product_service", "FindById")
 	result, err := service.ProductRepository.FindById(ctx, productId)
 	if err != nil {

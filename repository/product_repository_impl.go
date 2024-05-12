@@ -31,7 +31,9 @@ func (repository *ProductRepositoryImpl) Delete(ctx context.Context, product dom
 	// SQL := "delete from Product where id = ?"
 	// _, err := tx.ExecContext(ctx, SQL, Product.Id)
 	// exception.PanicIfError(err)
-	result := repository.DB.Gorm.Delete(&domain.Product{Id: product.Id})
+	result := repository.DB.Gorm.Delete(&domain.Product{BaseModel: domain.BaseModel{
+		ID: product.BaseModel.ID,
+	}})
 	return result.Error
 }
 
@@ -50,7 +52,9 @@ func (repository *ProductRepositoryImpl) FindById(ctx context.Context, productId
 	// 	return Product, errors.New("product is not found")
 	// }
 	var product *domain.Product
-	result := repository.DB.Gorm.Where(&domain.Product{Id: productId}).First(&product)
+	result := repository.DB.Gorm.Where(&domain.Product{BaseModel: domain.BaseModel{
+		ID: productId,
+	}}).First(&product)
 	return product, result.Error
 }
 

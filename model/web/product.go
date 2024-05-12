@@ -3,7 +3,9 @@ package web
 import "github.com/muhhylmi/store-api/model/domain"
 
 type ProductCreateRequest struct {
-	Name string `validate:"required,min=1,max=100" json:"name"`
+	Name       string `validate:"required,min=1,max=100" json:"name"`
+	CategoryId string `validate:"required,uuid4" json:"categoryId"`
+	Price      int64  `validate:"required,min=1000" json:"price"`
 }
 
 type ProductUpdateRequest struct {
@@ -12,14 +14,16 @@ type ProductUpdateRequest struct {
 }
 
 type ProductResponse struct {
-	Id   string `json:"id"`
-	Name string `json:"name"`
+	Id    string `json:"id"`
+	Name  string `json:"name"`
+	Price int64  `json:"price"`
 }
 
 func ToProductRersponse(Product domain.Product) ProductResponse {
 	return ProductResponse{
-		Id:   Product.Id,
-		Name: Product.Name,
+		Id:    Product.BaseModel.ID,
+		Name:  Product.ProductName,
+		Price: Product.Price,
 	}
 }
 
