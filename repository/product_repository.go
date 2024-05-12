@@ -21,7 +21,7 @@ type ProductRepository interface {
 	FindAll(ctx context.Context) []*domain.Product
 }
 
-func NewCategoryRepository(logger *logger.Logger, db *databases.DBService) ProductRepository {
+func NewProductRepository(logger *logger.Logger, db *databases.DBService) ProductRepository {
 	return &ProductRepositoryImpl{
 		Logger: logger,
 		DB:     db,

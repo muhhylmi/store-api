@@ -3,29 +3,13 @@ package service
 import (
 	"context"
 
-	"github.com/go-playground/validator/v10"
 	"github.com/google/uuid"
 	"github.com/muhhylmi/store-api/model/domain"
 	"github.com/muhhylmi/store-api/model/web"
-	"github.com/muhhylmi/store-api/repository"
 	"github.com/muhhylmi/store-api/utils/exception"
-	"github.com/muhhylmi/store-api/utils/logger"
+	"github.com/muhhylmi/store-api/utils/objects"
 	"github.com/muhhylmi/store-api/utils/wrapper"
 )
-
-type ProductServiceImpl struct {
-	Logger            *logger.Logger
-	ProductRepository repository.ProductRepository
-	Validate          *validator.Validate
-}
-
-func NewProductService(logger *logger.Logger, ProductRepository repository.ProductRepository, validate *validator.Validate) ProductService {
-	return &ProductServiceImpl{
-		Logger:            logger,
-		ProductRepository: ProductRepository,
-		Validate:          validate,
-	}
-}
 
 func (service *ProductServiceImpl) Create(ctx context.Context, request web.ProductCreateRequest) web.ProductResponse {
 	l := service.Logger.LogWithContext("product_service", "Create")
@@ -35,10 +19,21 @@ func (service *ProductServiceImpl) Create(ctx context.Context, request web.Produ
 		l.Error(err)
 		exception.PanicIfError(err)
 	}
+
+	_, errCheck := service.CategoryRepository.FindById(ctx, request.CategoryId)
+	if errCheck != nil {
+		l.Error(errCheck)
+		panic(wrapper.NewNotFoundError("category not found"))
+	}
+
 	product := domain.Product{
 		BaseModel: domain.BaseModel{
-			ID: uuid.NewString(),
+			ID:        uuid.NewString(),
+			IsDeleted: objects.ToPointer(false),
+			CreatedBy: &request.UserId,
 		},
+		Price:       request.Price,
+		CategoryId:  request.CategoryId,
 		ProductName: request.Name,
 	}
 	result, err := service.ProductRepository.Save(ctx, product)

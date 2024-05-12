@@ -36,9 +36,14 @@ func main() {
 		Gorm: db,
 	}
 
+	// category domain
+	categoryRepo := repository.NewCategoryRepository(logger, dbService)
+	categoryService := service.NewCategoryService(logger, categoryRepo, validate)
+	categoryController := controller.NewCategoryController(logger, categoryService)
+
 	// product domain
-	productRepository := repository.NewCategoryRepository(logger, dbService)
-	productService := service.NewProductService(logger, productRepository, validate)
+	productRepository := repository.NewProductRepository(logger, dbService)
+	productService := service.NewProductService(logger, productRepository, categoryRepo, validate)
 	productController := controller.NewProductController(logger, productService)
 
 	// user domain
@@ -46,7 +51,7 @@ func main() {
 	userService := service.NewUserService(logger, config, userRepository, validate)
 	userController := controller.NewUserController(logger, userService)
 
-	router := app.NewRouter(productController, userController)
+	router := app.NewRouter(productController, userController, categoryController)
 	server := http.Server{
 		Addr:    fmt.Sprintf("%1s:%2s", config.HOST, config.PORT),
 		Handler: middleware.NewAuthMiddleware(router, config),

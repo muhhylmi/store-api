@@ -8,13 +8,6 @@ import (
 )
 
 func (repository *UserRepositoryImpl) Save(ctx context.Context, user domain.Users) (domain.Users, error) {
-	// SQL := "insert into Product(name) values (?)"
-	// result, err := tx.ExecContext(ctx, SQL, Product.Name)
-	// exception.PanicIfError(err)
-	// id, err := result.LastInsertId()
-	// exception.PanicIfError(err)
-	// Product.Id = int(id)
-
 	result := repository.DB.Gorm.Create(&user)
 	return user, result.Error
 }

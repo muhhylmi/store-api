@@ -23,7 +23,12 @@ func NewProductController(logger *logger.Logger, ProductService service.ProductS
 }
 
 func (controller *ProductControllerImpl) Create(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
-	ProductCreateRequest := web.ProductCreateRequest{}
+	ProductCreateRequest := web.ProductCreateRequest{
+		AuthData: web.AuthData{
+			Role:   request.Header.Get("role"),
+			UserId: request.Header.Get("userId"),
+		},
+	}
 	wrapper.ReadJsonFromRequest(request, &ProductCreateRequest)
 
 	ProductResponse := controller.ProductService.Create(request.Context(), ProductCreateRequest)
