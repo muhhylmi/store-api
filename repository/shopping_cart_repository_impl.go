@@ -5,6 +5,7 @@ import (
 
 	"github.com/muhhylmi/store-api/model/domain"
 	"github.com/muhhylmi/store-api/model/web"
+	"github.com/muhhylmi/store-api/utils/objects"
 )
 
 func (repository *ShoppingCartRepositoryImpl) Save(ctx context.Context, carts []domain.ShoppingCarts) ([]domain.ShoppingCarts, error) {
@@ -27,7 +28,8 @@ func (repository *ShoppingCartRepositoryImpl) FindAll(ctx context.Context, req w
 func (repository *ShoppingCartRepositoryImpl) FindById(ctx context.Context, Id string) (*domain.ShoppingCarts, error) {
 	var cart *domain.ShoppingCarts
 	result := repository.DB.Gorm.Where(&domain.ShoppingCarts{BaseModel: domain.BaseModel{
-		ID: Id,
+		ID:        Id,
+		IsDeleted: objects.ToPointer(false),
 	}}).First(&cart)
 	return cart, result.Error
 }

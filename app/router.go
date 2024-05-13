@@ -27,6 +27,7 @@ func NewRouter(productController controller.ProductController, userController co
 	router.GET("/api/shopping-cart", cartController.List)
 	router.POST("/api/shopping-cart", cartController.Create)
 	router.PUT("/api/shopping-cart/:shopping_cart_id", cartController.Update)
+	router.DELETE("/api/shopping-cart/:shopping_cart_id", cartController.Delete)
 
 	router.PanicHandler = wrapper.ErrorHandler
 	return router

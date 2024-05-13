@@ -20,6 +20,7 @@ type ShoppingCartService interface {
 	Create(ctx context.Context, request web.ShopingCartCreateRequest) []web.ShopingCartResponse
 	FindAll(ctx context.Context, req web.ListCartRequest) []web.ListCartResponse
 	Update(ctx context.Context, req web.UpdateCartRequest) web.ShopingCartResponse
+	Delete(ctx context.Context, req web.DeleteCartRequest) web.ShopingCartResponse
 }
 
 func NewShoppingCartService(logger *logger.Logger, cartRepo repository.ShoppingCartRepository, productRepo repository.ProductRepository,

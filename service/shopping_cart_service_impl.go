@@ -6,6 +6,7 @@ import (
 
 	"github.com/muhhylmi/store-api/model/web"
 	"github.com/muhhylmi/store-api/utils/exception"
+	"github.com/muhhylmi/store-api/utils/objects"
 	"github.com/muhhylmi/store-api/utils/wrapper"
 )
 
@@ -56,19 +57,46 @@ func (service *ShoppingCartServiceImpl) Update(ctx context.Context, req web.Upda
 	}
 	shoppingCart, errCheckCart := service.Repository.FindById(ctx, req.ShoppingCartId)
 	if errCheckCart != nil {
-		l.Error(errCheckCart)
-		panic(wrapper.NewNotFoundError(errCheckCart.Error()))
+		l.Error("shopping cart not found")
+		panic(wrapper.NewNotFoundError("shopping cart not found"))
 	}
 
 	_, errProduct := service.ProductRepo.FindById(ctx, req.ProductId)
 	if errProduct != nil {
-		l.Error(errProduct)
-		panic(wrapper.NewNotFoundError(errProduct.Error()))
+		l.Error("product is not found")
+		panic(wrapper.NewNotFoundError("product is not found"))
 	}
 	shoppingCart.BaseModel.UpdatedBy = req.AuthData.UserId
 	shoppingCart.BaseModel.UpdatedAt = time.Now().Unix()
 	shoppingCart.ProductId = req.ProductId
 	shoppingCart.Qty = req.Qty
+
+	result, errUpdate := service.Repository.Update(ctx, *shoppingCart)
+	if errUpdate != nil {
+		l.Error(err)
+		exception.PanicIfError(err)
+	}
+
+	return web.ToUpdateShopingCartResponse(result)
+}
+
+func (service *ShoppingCartServiceImpl) Delete(ctx context.Context, req web.DeleteCartRequest) web.ShopingCartResponse {
+	l := service.Logger.LogWithContext("shopping_cart_service", "Update")
+
+	err := service.Validate.Struct(req)
+	if err != nil {
+		l.Error(err)
+		exception.PanicIfError(err)
+	}
+	shoppingCart, errCheckCart := service.Repository.FindById(ctx, req.ShoppingCartId)
+	if errCheckCart != nil {
+		l.Error("shopping cart not found")
+		panic(wrapper.NewNotFoundError("shopping cart not found"))
+	}
+
+	shoppingCart.BaseModel.UpdatedBy = req.AuthData.UserId
+	shoppingCart.BaseModel.UpdatedAt = time.Now().Unix()
+	shoppingCart.IsDeleted = objects.ToPointer(true)
 
 	result, errUpdate := service.Repository.Update(ctx, *shoppingCart)
 	if errUpdate != nil {

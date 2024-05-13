@@ -73,3 +73,24 @@ func (controller *ShoppingCartControllerImpl) Update(writer http.ResponseWriter,
 
 	wrapper.WriteToResponseBody(writer, webResponse)
 }
+
+func (controller *ShoppingCartControllerImpl) Delete(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
+	cartId := params.ByName("shopping_cart_id")
+
+	deleteCartRequest := web.DeleteCartRequest{
+		AuthData: web.AuthData{
+			Role:   request.Header.Get("role"),
+			UserId: request.Header.Get("userId"),
+		},
+		ShoppingCartId: cartId,
+	}
+
+	response := controller.Service.Delete(request.Context(), deleteCartRequest)
+	webResponse := web.WebResponse{
+		Code:   200,
+		Status: "OK",
+		Data:   response,
+	}
+
+	wrapper.WriteToResponseBody(writer, webResponse)
+}

@@ -51,6 +51,11 @@ type UpdateCartRequest struct {
 	Qty            int    `json:"qty"`
 }
 
+type DeleteCartRequest struct {
+	AuthData
+	ShoppingCartId string `params:"shopping_cart_id"`
+}
+
 func ToProductIds(req []CartItem) []string {
 	result := []string{}
 	for _, item := range req {
