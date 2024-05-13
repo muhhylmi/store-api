@@ -26,6 +26,17 @@ type LoginResponse struct {
 	Token    string `json:"access_token"`
 }
 
+type TopUpRequest struct {
+	AuthData
+
+	UserId  string  `params:"user_id"`
+	Balance float64 `json:"balance" vlidate:"min=10000"`
+}
+
+type TopUpResponse struct {
+	Message string `json:"message"`
+}
+
 func ToUserRersponse(user domain.Users) UserResponse {
 	return UserResponse{
 		Id:       user.BaseModel.ID,

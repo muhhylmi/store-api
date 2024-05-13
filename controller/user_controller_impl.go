@@ -35,3 +35,25 @@ func (controller *UserControllerImpl) Login(writer http.ResponseWriter, request 
 
 	wrapper.WriteToResponseBody(writer, webResponse)
 }
+
+func (controller *UserControllerImpl) TopUp(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
+	userId := params.ByName("user_id")
+
+	updateRequest := web.TopUpRequest{
+		AuthData: web.AuthData{
+			Role:   request.Header.Get("role"),
+			UserId: request.Header.Get("userId"),
+		},
+		UserId: userId,
+	}
+	wrapper.ReadJsonFromRequest(request, &updateRequest)
+
+	response := controller.UserService.TopUpBalance(request.Context(), updateRequest)
+	webResponse := web.WebResponse{
+		Code:   200,
+		Status: "OK",
+		Data:   response,
+	}
+
+	wrapper.WriteToResponseBody(writer, webResponse)
+}

@@ -18,6 +18,7 @@ func NewRouter(productController controller.ProductController, userController co
 	// users
 	router.POST("/api/users", userController.Create)
 	router.POST("/api/users/login", userController.Login)
+	router.PUT("/api/users/top-up/:user_id", userController.TopUp)
 
 	//categories
 	router.POST("/api/categories", categoryController.Create)

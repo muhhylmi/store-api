@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/muhhylmi/store-api/model/domain"
@@ -72,4 +73,29 @@ func (service *UserServiceImpl) Login(ctx context.Context, request web.LoginRequ
 	}
 
 	return web.ToLoginResponse(*checkUser, token)
+}
+
+func (service *UserServiceImpl) TopUpBalance(ctx context.Context, request web.TopUpRequest) web.TopUpResponse {
+	l := service.Logger.LogWithContext("product_service", "FindById")
+
+	checkUser, errCheck := service.Repository.FindById(ctx, request.UserId)
+	if errCheck != nil {
+		l.Error("User Is Not Found")
+		panic(wrapper.NewNotFoundError("user is not found"))
+	}
+
+	checkUser.BaseModel.UpdatedBy = request.AuthData.UserId
+	checkUser.BaseModel.UpdatedAt = time.Now().Unix()
+	checkUser.Balance += request.Balance
+
+	ctx, _ = service.Repository.BeginTransaction(ctx)
+	if _, err := service.Repository.TopUpBalance(ctx, *checkUser); err != nil {
+		service.Repository.RollbackTransaction(ctx)
+		l.Error("cannot top up balance")
+		panic(wrapper.NewStatuConflictError("cannot top up balance"))
+	}
+
+	return web.TopUpResponse{
+		Message: "Success Top Up User Balance",
+	}
 }

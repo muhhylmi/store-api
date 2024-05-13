@@ -19,10 +19,8 @@ type UserServiceImpl struct {
 
 type UserService interface {
 	Create(ctx context.Context, request web.UserCreateRequest) web.UserResponse
-	// Update(ctx context.Context, request web.ProductUpdateRequest) web.ProductResponse
-	// Delete(ctx context.Context, ProductId string)
 	Login(ctx context.Context, request web.LoginRequest) web.LoginResponse
-	// FindAll(ctx context.Context) []web.ProductResponse
+	TopUpBalance(ctx context.Context, request web.TopUpRequest) web.TopUpResponse
 }
 
 func NewUserService(logger *logger.Logger, config *config.Configurations, repository repository.UserRepository, validate *validator.Validate) UserService {

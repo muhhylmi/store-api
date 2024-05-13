@@ -16,6 +16,7 @@ type UserControllerImpl struct {
 type UserController interface {
 	Create(writer http.ResponseWriter, request *http.Request, params httprouter.Params)
 	Login(writer http.ResponseWriter, request *http.Request, params httprouter.Params)
+	TopUp(writer http.ResponseWriter, request *http.Request, params httprouter.Params)
 }
 
 func NewUserController(logger *logger.Logger, userService service.UserService) UserController {
