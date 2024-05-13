@@ -51,3 +51,25 @@ func (controller *ShoppingCartControllerImpl) List(writer http.ResponseWriter, r
 
 	wrapper.WriteToResponseBody(writer, webResponse)
 }
+
+func (controller *ShoppingCartControllerImpl) Update(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
+	cartId := params.ByName("shopping_cart_id")
+
+	updateCartRequest := web.UpdateCartRequest{
+		AuthData: web.AuthData{
+			Role:   request.Header.Get("role"),
+			UserId: request.Header.Get("userId"),
+		},
+		ShoppingCartId: cartId,
+	}
+	wrapper.ReadJsonFromRequest(request, &updateCartRequest)
+
+	response := controller.Service.Update(request.Context(), updateCartRequest)
+	webResponse := web.WebResponse{
+		Code:   200,
+		Status: "OK",
+		Data:   response,
+	}
+
+	wrapper.WriteToResponseBody(writer, webResponse)
+}

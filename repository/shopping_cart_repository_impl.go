@@ -14,13 +14,6 @@ func (repository *ShoppingCartRepositoryImpl) Save(ctx context.Context, carts []
 
 func (repository *ShoppingCartRepositoryImpl) FindAll(ctx context.Context, req web.ListCartRequest) []*domain.ShoppingCarts {
 	var carts []*domain.ShoppingCarts
-
-	// productTableName := domain.Product{}.TableName()
-	// ShoppingCartTableName := domain.ShoppingCarts{}.TableName()
-	// cartItemsTableName := domain.ShoppingCartItems{}.TableName()
-	// querySelect := fmt.Sprintf(`%[1]s.id id, %[1]s.product_name name, %[1]s.category_id category_id,
-	// %[1]s.price price ,%[2]s.category_name category_name`, productTableName, categoryTableName)
-
 	tx := repository.DB.Gorm.Model(&domain.ShoppingCarts{}).
 		Preload("Product").
 		Where("user_id = ? AND is_deleted = ?", req.AuthData.UserId, false)
@@ -28,10 +21,6 @@ func (repository *ShoppingCartRepositoryImpl) FindAll(ctx context.Context, req w
 		tx.Where("status = ?", req.Status)
 	}
 	tx.Find(&carts)
-
-	// repository.DB.Gorm.Where(&domain.ShoppingCarts{BaseModel: domain.BaseModel{
-	// 	IsDeleted: objects.ToPointer(false),
-	// }}).Find(&carts)
 	return carts
 }
 
@@ -40,5 +29,10 @@ func (repository *ShoppingCartRepositoryImpl) FindById(ctx context.Context, Id s
 	result := repository.DB.Gorm.Where(&domain.ShoppingCarts{BaseModel: domain.BaseModel{
 		ID: Id,
 	}}).First(&cart)
+	return cart, result.Error
+}
+
+func (repository *ShoppingCartRepositoryImpl) Update(ctx context.Context, cart domain.ShoppingCarts) (domain.ShoppingCarts, error) {
+	result := repository.DB.Gorm.Save(cart)
 	return cart, result.Error
 }

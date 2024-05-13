@@ -43,6 +43,14 @@ type CartItemResponse struct {
 	Qty          int    `json:"qty"`
 }
 
+type UpdateCartRequest struct {
+	AuthData
+
+	ShoppingCartId string `params:"shopping_cart_id"`
+	ProductId      string `json:"productId"`
+	Qty            int    `json:"qty"`
+}
+
 func ToProductIds(req []CartItem) []string {
 	result := []string{}
 	for _, item := range req {
@@ -95,4 +103,12 @@ func ToCartListResponse(carts []*domain.ShoppingCarts) []ListCartResponse {
 		})
 	}
 	return result
+}
+
+func ToUpdateShopingCartResponse(cart domain.ShoppingCarts) ShopingCartResponse {
+	return ShopingCartResponse{
+		ShoppingCartId: cart.ID,
+		ProductId:      cart.ProductId,
+		Qty:            cart.Qty,
+	}
 }
