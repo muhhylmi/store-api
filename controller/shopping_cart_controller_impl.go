@@ -27,13 +27,27 @@ func (controller *ShoppingCartControllerImpl) Create(writer http.ResponseWriter,
 	wrapper.WriteToResponseBody(writer, webResponse)
 }
 
-// func (controller *ShoppingCartControllerImpl) List(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
-// 	categoryResponse := controller.Service.FindAll(request.Context())
-// 	webResponse := web.WebResponse{
-// 		Code:   200,
-// 		Status: "OK",
-// 		Data:   categoryResponse,
-// 	}
+func (controller *ShoppingCartControllerImpl) List(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
+	query := request.URL.Query()
+	status := "PENDING"
+	if query.Get("status") != "" {
+		status = query.Get("status")
+	}
 
-// 	wrapper.WriteToResponseBody(writer, webResponse)
-// }
+	listCartRequest := web.ListCartRequest{
+		AuthData: web.AuthData{
+			Role:   request.Header.Get("role"),
+			UserId: request.Header.Get("userId"),
+		},
+		Status: status,
+	}
+
+	categoryResponse := controller.Service.FindAll(request.Context(), listCartRequest)
+	webResponse := web.WebResponse{
+		Code:   200,
+		Status: "OK",
+		Data:   categoryResponse,
+	}
+
+	wrapper.WriteToResponseBody(writer, webResponse)
+}

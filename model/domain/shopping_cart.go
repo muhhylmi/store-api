@@ -31,9 +31,10 @@ func (ShoppingCarts) TableName() string {
 type ShoppingCartItems struct {
 	BaseModel
 
-	ShoppingCartId string `gorm:"column:shopping_cart_id"`
-	ProductId      string `gorm:"column:product_id"`
-	Qty            int    `gorm:"column:qty"`
+	ShoppingCartId string  `gorm:"column:shopping_cart_id"`
+	ProductId      string  `gorm:"column:product_id"`
+	Qty            int     `gorm:"column:qty"`
+	Product        Product `gorm:"foreignKey:ProductId;references:ID"`
 }
 
 func (ShoppingCartItems) TableName() string {

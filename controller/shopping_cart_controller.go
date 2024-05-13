@@ -15,7 +15,7 @@ type ShoppingCartControllerImpl struct {
 
 type ShoppingCartController interface {
 	Create(writer http.ResponseWriter, request *http.Request, params httprouter.Params)
-	// List(writer http.ResponseWriter, request *http.Request, params httprouter.Params)
+	List(writer http.ResponseWriter, request *http.Request, params httprouter.Params)
 }
 
 func NewShoppingCartController(logger *logger.Logger, cart service.ShoppingCartService) ShoppingCartController {

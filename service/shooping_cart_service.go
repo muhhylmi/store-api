@@ -18,7 +18,7 @@ type ShoppingCartServiceImpl struct {
 
 type ShoppingCartService interface {
 	Create(ctx context.Context, request web.ShopingCartCreateRequest) web.ShopingCartResponse
-	// FindAll(ctx context.Context) []web.CategoryResponse
+	FindAll(ctx context.Context, req web.ListCartRequest) []web.ListCartResponse
 }
 
 func NewShoppingCartService(logger *logger.Logger, cartRepo repository.ShoppingCartRepository, productRepo repository.ProductRepository,

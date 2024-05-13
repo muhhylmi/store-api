@@ -24,6 +24,7 @@ func NewRouter(productController controller.ProductController, userController co
 	router.GET("/api/categories", categoryController.List)
 
 	// shopping cart
+	router.GET("/api/shopping-cart", cartController.List)
 	router.POST("/api/shopping-cart", cartController.Create)
 
 	router.PanicHandler = wrapper.ErrorHandler

@@ -33,7 +33,14 @@ func (service *ShoppingCartServiceImpl) Create(ctx context.Context, request web.
 	return web.ToShoopingCartRersponse(result)
 }
 
-// func (service *ShoppingCartServiceImpl) FindAll(ctx context.Context) []web.CategoryResponse {
-// 	result := service.Repository.FindAll(ctx)
-// 	return web.ToCategoryRersponses(result)
-// }
+func (service *ShoppingCartServiceImpl) FindAll(ctx context.Context, req web.ListCartRequest) []web.ListCartResponse {
+	l := service.Logger.LogWithContext("product_service", "Create")
+
+	err := service.Validate.Struct(req)
+	if err != nil {
+		l.Error(err)
+		exception.PanicIfError(err)
+	}
+	result := service.Repository.FindAll(ctx, req)
+	return web.ToCartListResponse(result)
+}
