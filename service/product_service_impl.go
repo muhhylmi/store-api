@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/muhhylmi/store-api/model/domain"
@@ -45,37 +46,59 @@ func (service *ProductServiceImpl) Create(ctx context.Context, request web.Produ
 	return web.ToProductRersponse(result)
 }
 
-// func (service *ProductServiceImpl) Update(ctx context.Context, request web.ProductUpdateRequest) web.ProductResponse {
-// 	err := service.Validate.Struct(request)
-// 	wrapper.PanicIfError(err)
+func (service *ProductServiceImpl) Update(ctx context.Context, request web.ProductUpdateRequest) web.ProductResponse {
+	l := service.Logger.LogWithContext("product_service", "Update")
 
-// 	tx, err := service.DB.Begin()
-// 	wrapper.PanicIfError(err)
-// 	defer databases.CommitOrRollback(tx)
+	err := service.Validate.Struct(request)
+	if err != nil {
+		l.Error(err)
+		exception.PanicIfError(err)
+	}
 
-// 	Product, err := service.ProductRepository.FindById(ctx, tx, request.Id)
-// 	if err != nil {
-// 		panic(wrapper.NewNotFoundError(err.Error()))
-// 	}
+	product, err := service.ProductRepository.FindProductById(ctx, request.Id)
+	if err != nil {
+		l.Error("product not found")
+		panic(wrapper.NewNotFoundError("product not found"))
+	}
 
-// 	Product.Name = request.Name
-// 	Product = service.ProductRepository.Update(ctx, tx, Product)
+	_, errCheckCat := service.CategoryRepository.FindById(ctx, request.CategoryId)
+	if errCheckCat != nil {
+		l.Error(errCheckCat)
+		panic(wrapper.NewNotFoundError("category not found"))
+	}
 
-// 	return web.ToProductRersponse(Product)
-// }
+	product.ProductName = request.Name
+	product.Price = request.Price
+	product.CategoryId = request.CategoryId
+	product.UpdatedAt = time.Now().Unix()
+	product.UpdatedBy = request.AuthData.UserId
 
-// func (service *ProductServiceImpl) Delete(ctx context.Context, productId string) {
-// 	tx, err := service.DB.Begin()
-// 	wrapper.PanicIfError(err)
-// 	defer databases.CommitOrRollback(tx)
+	return web.ToProductRersponse(*product)
+}
 
-// 	Product, err := service.ProductRepository.FindById(ctx, tx, ProductId)
-// 	if err != nil {
-// 		panic(wrapper.NewNotFoundError(err.Error()))
-// 	}
+func (service *ProductServiceImpl) Delete(ctx context.Context, request web.DeleteProductRequest) web.ProductResponse {
+	l := service.Logger.LogWithContext("product_service", "Delete")
 
-// 	service.ProductRepository.Delete(ctx, tx, Product)
-// }
+	err := service.Validate.Struct(request)
+	if err != nil {
+		l.Error(err)
+		exception.PanicIfError(err)
+	}
+
+	product, err := service.ProductRepository.FindProductById(ctx, request.Id)
+	if err != nil {
+		l.Error("product not found")
+		panic(wrapper.NewNotFoundError("product not found"))
+	}
+
+	product.IsDeleted = objects.ToPointer(true)
+	product.UpdatedAt = time.Now().Unix()
+	product.UpdatedBy = request.AuthData.UserId
+
+	service.ProductRepository.Update(ctx, *product)
+
+	return web.ToProductRersponse(*product)
+}
 
 func (service *ProductServiceImpl) FindById(ctx context.Context, productId string) web.ProductResponse {
 	l := service.Logger.LogWithContext("product_service", "FindById")

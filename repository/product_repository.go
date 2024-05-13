@@ -19,6 +19,7 @@ type ProductRepository interface {
 	Update(ctx context.Context, Product domain.Product) (domain.Product, error)
 	Delete(ctx context.Context, Product domain.Product) error
 	FindById(ctx context.Context, ProductId string) (*web.ProductResponse, error)
+	FindProductById(ctx context.Context, Id string) (*domain.Product, error)
 	FindAll(ctx context.Context, req web.ProductListRequest) []*web.ProductResponse
 	CountByIds(ctx context.Context, req []string) int64
 }

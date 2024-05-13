@@ -11,8 +11,18 @@ type ProductCreateRequest struct {
 }
 
 type ProductUpdateRequest struct {
-	Id   string `validate:"required"`
-	Name string `validate:"required,min=1,max=200" json:"name"`
+	AuthData
+
+	Id         string `validate:"required"`
+	Name       string `validate:"required,min=1,max=200" json:"name"`
+	CategoryId string `validate:"required,uuid4" json:"categoryId"`
+	Price      int64  `validate:"required,min=1000" json:"price"`
+}
+
+type DeleteProductRequest struct {
+	AuthData
+
+	Id string `validate:"required"`
 }
 
 type ProductResponse struct {
