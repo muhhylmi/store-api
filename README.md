@@ -138,3 +138,30 @@ Only User With Role `ADMIN` can access this API
 
     curl --location 'localhost:3000/api/categories' \
     --header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MTU1MjM1NjgsImlkIjoiMTM2YzRmNDEtZmM5ZS00NWIyLWJhMGQtZTk0NjU0OTUwNjIwIiwicm9sZSI6IkFETUlOIiwidXNlcm5hbWUiOiJhZG1pbiJ9.-Qlopme_1jAX7mOAjsdaHwgnTO347mz8h_Z-Mo2r5WA'
+
+## Create Cart
+### Request
+
+`POST localhost:3000/api/shopping-cart`
+
+    curl --location 'localhost:3000/api/shopping-cart' \
+    --header 'Content-Type: application/json' \
+    --header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MTU1OTA5MjgsImlkIjoiMTM2YzRmNDEtZmM5ZS00NWIyLWJhMGQtZTk0NjU0OTUwNjIwIiwicm9sZSI6IkFETUlOIiwidXNlcm5hbWUiOiJhZG1pbiJ9.EHmnqyqcnxfoCHil-fXo6XEYzYgmKnRwPtUGzQcx-kA' \
+    --data '{
+        "items": [
+            {
+                "productId": "b4c1d2fc-c5d1-4736-b162-b4715583adc2",
+                "qty": 4
+            }
+        ]
+    }'
+
+# List Cart
+### Request
+`query: status (one of PENDING OR SUCCESS) optional`
+
+`GET localhost:3000/api/shopping-cart`
+
+    curl --location 'localhost:3000/api/shopping-cart?status=PENDING' \
+    --header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MTU1OTA5MjgsImlkIjoiMTM2YzRmNDEtZmM5ZS00NWIyLWJhMGQtZTk0NjU0OTUwNjIwIiwicm9sZSI6IkFETUlOIiwidXNlcm5hbWUiOiJhZG1pbiJ9.EHmnqyqcnxfoCHil-fXo6XEYzYgmKnRwPtUGzQcx-kA'
+
