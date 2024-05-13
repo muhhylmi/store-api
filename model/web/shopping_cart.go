@@ -13,8 +13,9 @@ type ShopingCartCreateRequest struct {
 }
 
 type ShopingCartResponse struct {
-	ShoppingCartId string     `json:"shoppingCartId"`
-	Items          []CartItem `json:"items"`
+	ShoppingCartId string `json:"shoppingCartId"`
+	ProductId      string `json:"productId"`
+	Qty            int    `json:"qty"`
 }
 
 type CartItem struct {
@@ -28,8 +29,11 @@ type ListCartRequest struct {
 }
 
 type ListCartResponse struct {
-	ShoppingCartId string             `json:"shoppingCartId"`
-	Items          []CartItemResponse `json:"items"`
+	ShoppingCartId string `json:"shoppingCartId"`
+	ProductId      string `json:"productId"`
+	ProductPrice   int64  `json:"productPrice"`
+	ProductName    string `json:"productName"`
+	Qty            int    `json:"qty"`
 }
 
 type CartItemResponse struct {
@@ -47,34 +51,17 @@ func ToProductIds(req []CartItem) []string {
 	return result
 }
 
-func ToShoppingCartModel(req ShopingCartCreateRequest) domain.ShoppingCarts {
-	result := domain.ShoppingCarts{}
-	shoppingCartId := uuid.NewString()
-	result.ID = shoppingCartId
-	result.IsDeleted = objects.ToPointer(false)
-	result.CreatedBy = &req.AuthData.UserId
-	result.UserId = req.AuthData.UserId
-	result.Status = PENDING_CART
-	for _, cart := range req.Items {
-		result.Items = append(result.Items, domain.ShoppingCartItems{
+func ToShoppingCartModel(req ShopingCartCreateRequest) []domain.ShoppingCarts {
+	result := []domain.ShoppingCarts{}
+	for _, item := range req.Items {
+		result = append(result, domain.ShoppingCarts{
 			BaseModel: domain.BaseModel{
 				ID:        uuid.NewString(),
 				IsDeleted: objects.ToPointer(false),
 				CreatedBy: &req.AuthData.UserId,
 			},
-			ShoppingCartId: shoppingCartId,
-			ProductId:      cart.ProductId,
-			Qty:            cart.Qty,
-		})
-	}
-	return result
-}
-
-func ToShoopingCartRersponse(cart domain.ShoppingCarts) ShopingCartResponse {
-	result := ShopingCartResponse{}
-	result.ShoppingCartId = cart.ID
-	for _, item := range cart.Items {
-		result.Items = append(result.Items, CartItem{
+			UserId:    req.AuthData.UserId,
+			Status:    PENDING_CART,
 			ProductId: item.ProductId,
 			Qty:       item.Qty,
 		})
@@ -82,18 +69,30 @@ func ToShoopingCartRersponse(cart domain.ShoppingCarts) ShopingCartResponse {
 	return result
 }
 
+func ToShoopingCartRersponse(carts []domain.ShoppingCarts) []ShopingCartResponse {
+	result := []ShopingCartResponse{}
+
+	for _, cart := range carts {
+		result = append(result, ShopingCartResponse{
+			ShoppingCartId: cart.ID,
+			ProductId:      cart.ProductId,
+			Qty:            cart.Qty,
+		})
+	}
+	return result
+}
+
 func ToCartListResponse(carts []*domain.ShoppingCarts) []ListCartResponse {
-	result := make([]ListCartResponse, len(carts))
-	for i, cart := range carts {
-		result[i].ShoppingCartId = cart.ID
-		for _, item := range cart.Items {
-			result[i].Items = append(result[i].Items, CartItemResponse{
-				ProductId:    item.ProductId,
-				ProductName:  item.Product.ProductName,
-				ProductPrice: item.Product.Price,
-				Qty:          item.Qty,
-			})
-		}
+	result := []ListCartResponse{}
+
+	for _, cart := range carts {
+		result = append(result, ListCartResponse{
+			ShoppingCartId: cart.ID,
+			ProductId:      cart.ProductId,
+			ProductName:    cart.Product.ProductName,
+			ProductPrice:   cart.Product.Price,
+			Qty:            cart.Qty,
+		})
 	}
 	return result
 }

@@ -7,9 +7,9 @@ import (
 	"github.com/muhhylmi/store-api/model/web"
 )
 
-func (repository *ShoppingCartRepositoryImpl) Save(ctx context.Context, cart domain.ShoppingCarts) (domain.ShoppingCarts, error) {
-	result := repository.DB.Gorm.Create(&cart)
-	return cart, result.Error
+func (repository *ShoppingCartRepositoryImpl) Save(ctx context.Context, carts []domain.ShoppingCarts) ([]domain.ShoppingCarts, error) {
+	result := repository.DB.Gorm.CreateInBatches(&carts, len(carts))
+	return carts, result.Error
 }
 
 func (repository *ShoppingCartRepositoryImpl) FindAll(ctx context.Context, req web.ListCartRequest) []*domain.ShoppingCarts {
@@ -22,8 +22,7 @@ func (repository *ShoppingCartRepositoryImpl) FindAll(ctx context.Context, req w
 	// %[1]s.price price ,%[2]s.category_name category_name`, productTableName, categoryTableName)
 
 	tx := repository.DB.Gorm.Model(&domain.ShoppingCarts{}).
-		Preload("Items", "is_deleted = ?", false).
-		Preload("Items.Product").
+		Preload("Product").
 		Where("user_id = ? AND is_deleted = ?", req.AuthData.UserId, false)
 	if req.Status != "" {
 		tx.Where("status = ?", req.Status)

@@ -15,7 +15,7 @@ type ShoppingCartRepositoryImpl struct {
 }
 
 type ShoppingCartRepository interface {
-	Save(ctx context.Context, product domain.ShoppingCarts) (domain.ShoppingCarts, error)
+	Save(ctx context.Context, carts []domain.ShoppingCarts) ([]domain.ShoppingCarts, error)
 	FindAll(ctx context.Context, req web.ListCartRequest) []*domain.ShoppingCarts
 	FindById(ctx context.Context, Id string) (*domain.ShoppingCarts, error)
 }

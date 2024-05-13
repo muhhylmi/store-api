@@ -17,7 +17,7 @@ type ShoppingCartServiceImpl struct {
 }
 
 type ShoppingCartService interface {
-	Create(ctx context.Context, request web.ShopingCartCreateRequest) web.ShopingCartResponse
+	Create(ctx context.Context, request web.ShopingCartCreateRequest) []web.ShopingCartResponse
 	FindAll(ctx context.Context, req web.ListCartRequest) []web.ListCartResponse
 }
 

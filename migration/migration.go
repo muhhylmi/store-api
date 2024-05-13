@@ -23,8 +23,7 @@ func main() {
 	defer sqlDB.Close()
 
 	// Migrasi model data ke database untuk setiap tabel
-	err = db.AutoMigrate(&domain.Product{}, &domain.Categories{},
-		&domain.ShoppingCartItems{}, &domain.ShoppingCarts{},
+	err = db.AutoMigrate(&domain.Product{}, &domain.Categories{}, &domain.ShoppingCarts{},
 		&domain.Users{})
 	if err != nil {
 		log.Fatal(err)

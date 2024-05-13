@@ -18,25 +18,14 @@ package domain
 type ShoppingCarts struct {
 	BaseModel
 
-	UserId string              `gorm:"column:user_id"`
-	Status string              `gorm:"column:status"`
-	Items  []ShoppingCartItems `json:"items" gorm:"foreignKey:ShoppingCartId;references:ID"`
-	User   Users               `json:"user" gorm:"foreignKey:UserId;references:ID"`
+	UserId    string  `gorm:"column:user_id"`
+	Status    string  `gorm:"column:status"`
+	ProductId string  `gorm:"column:product_id"`
+	Qty       int     `gorm:"column:qty"`
+	Product   Product `gorm:"foreignKey:ProductId;references:ID"`
+	User      Users   `json:"user" gorm:"foreignKey:UserId;references:ID"`
 }
 
 func (ShoppingCarts) TableName() string {
 	return "shopping_carts"
-}
-
-type ShoppingCartItems struct {
-	BaseModel
-
-	ShoppingCartId string  `gorm:"column:shopping_cart_id"`
-	ProductId      string  `gorm:"column:product_id"`
-	Qty            int     `gorm:"column:qty"`
-	Product        Product `gorm:"foreignKey:ProductId;references:ID"`
-}
-
-func (ShoppingCartItems) TableName() string {
-	return "shopping_cart_items"
 }

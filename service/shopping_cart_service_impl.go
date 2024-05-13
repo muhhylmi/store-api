@@ -8,7 +8,7 @@ import (
 	"github.com/muhhylmi/store-api/utils/wrapper"
 )
 
-func (service *ShoppingCartServiceImpl) Create(ctx context.Context, request web.ShopingCartCreateRequest) web.ShopingCartResponse {
+func (service *ShoppingCartServiceImpl) Create(ctx context.Context, request web.ShopingCartCreateRequest) []web.ShopingCartResponse {
 	l := service.Logger.LogWithContext("product_service", "Create")
 
 	err := service.Validate.Struct(request)
