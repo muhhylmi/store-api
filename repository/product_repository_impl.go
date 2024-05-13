@@ -61,3 +61,14 @@ func (repository *ProductRepositoryImpl) FindAll(ctx context.Context, req web.Pr
 	tx.Find(&products)
 	return products
 }
+
+func (repository *ProductRepositoryImpl) CountByIds(ctx context.Context, productIds []string) int64 {
+	var result int64
+
+	repository.DB.Gorm.Model(domain.Product{}).
+		Where("id IN ?", productIds).
+		Count(&result)
+
+	return result
+
+}

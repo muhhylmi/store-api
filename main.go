@@ -40,30 +40,31 @@ func main() {
 	categoryRepo := repository.NewCategoryRepository(logger, dbService)
 	categoryService := service.NewCategoryService(logger, categoryRepo, validate)
 	categoryController := controller.NewCategoryController(logger, categoryService)
-
 	// product domain
 	productRepository := repository.NewProductRepository(logger, dbService)
 	productService := service.NewProductService(logger, productRepository, categoryRepo, validate)
 	productController := controller.NewProductController(logger, productService)
-
 	// user domain
 	userRepository := repository.NewUserRepository(logger, dbService)
 	userService := service.NewUserService(logger, config, userRepository, validate)
 	userController := controller.NewUserController(logger, userService)
+	// cart domain
+	cartRepo := repository.NewShoppingCartRepository(logger, dbService)
+	cartService := service.NewShoppingCartService(logger, cartRepo, productRepository, validate)
+	cartController := controller.NewShoppingCartController(logger, cartService)
 
-	router := app.NewRouter(productController, userController, categoryController)
+	// running application
+	router := app.NewRouter(productController, userController, categoryController, cartController)
 	server := http.Server{
 		Addr:    fmt.Sprintf("%1s:%2s", config.HOST, config.PORT),
 		Handler: middleware.NewAuthMiddleware(router, config),
 	}
-
 	go func() {
 		err := server.ListenAndServe()
 		if err != nil {
 			l.Error(err)
 		}
 	}()
-
 	l.Info("Starting HTTP server on port ", config.PORT)
 	select {}
 }

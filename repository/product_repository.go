@@ -20,6 +20,7 @@ type ProductRepository interface {
 	Delete(ctx context.Context, Product domain.Product) error
 	FindById(ctx context.Context, ProductId string) (*web.ProductResponse, error)
 	FindAll(ctx context.Context, req web.ProductListRequest) []*web.ProductResponse
+	CountByIds(ctx context.Context, req []string) int64
 }
 
 func NewProductRepository(logger *logger.Logger, db *databases.DBService) ProductRepository {

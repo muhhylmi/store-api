@@ -7,7 +7,7 @@ import (
 )
 
 func NewRouter(productController controller.ProductController, userController controller.UserController,
-	categoryController controller.CategoryController) *httprouter.Router {
+	categoryController controller.CategoryController, cartController controller.ShoppingCartController) *httprouter.Router {
 	router := httprouter.New()
 
 	// products
@@ -23,7 +23,9 @@ func NewRouter(productController controller.ProductController, userController co
 	router.POST("/api/categories", categoryController.Create)
 	router.GET("/api/categories", categoryController.List)
 
-	router.PanicHandler = wrapper.ErrorHandler
+	// shopping cart
+	router.POST("/api/shopping-cart", cartController.Create)
 
+	router.PanicHandler = wrapper.ErrorHandler
 	return router
 }
