@@ -24,20 +24,16 @@ erDiagram
         timestamp created_at
         bool is_deleted
     }
-    shopping_carts ||--|{ shopping_cart_items: contains
+    shopping_carts ||--|{ products: have_1
     users||--o{ shopping_carts: have
     shopping_carts {
         string id
         string user_id
         string status
-        timestamp created_at
-        bool is_deleted
-    }
-    shopping_cart_items ||--|{ products: have_1
-    shopping_cart_items{
-        string id
         string product_id
         int quantity
+        timestamp created_at
+        bool is_deleted
     }
     categories{
         string id
