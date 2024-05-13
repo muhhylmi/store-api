@@ -2,7 +2,6 @@ package service
 
 import (
 	"context"
-	"errors"
 
 	"github.com/google/uuid"
 	"github.com/muhhylmi/store-api/model/domain"
@@ -25,7 +24,7 @@ func (service *UserServiceImpl) Create(ctx context.Context, request web.UserCrea
 	_, errCheckUserName := service.Repository.FindByUsername(ctx, request.Username)
 	if errCheckUserName == nil {
 		l.Error("Username Already Exists")
-		panic(errors.New("username already exists"))
+		panic(wrapper.NewStatuConflictError("username already exists"))
 	}
 
 	hashedPassword, errHash := bcrypt.GenerateFromPassword([]byte(request.Password), bcrypt.DefaultCost)

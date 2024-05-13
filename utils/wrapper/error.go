@@ -12,6 +12,10 @@ type NotFoundError struct {
 	Error string
 }
 
+type StatusConflictError struct {
+	Error string
+}
+
 func NewNotFoundError(error string) NotFoundError {
 	return NotFoundError{Error: error}
 }
@@ -20,12 +24,20 @@ func NewValidationError(error error) validator.ValidationErrors {
 	return validator.ValidationErrors{}
 }
 
+func NewStatuConflictError(error string) StatusConflictError {
+	return StatusConflictError{Error: error}
+}
+
 func ErrorHandler(writer http.ResponseWriter, request *http.Request, err interface{}) {
 	if NotFoundDataError(writer, request, err) {
 		return
 	}
 
 	if ValidationError(writer, request, err) {
+		return
+	}
+
+	if DataConflictError(writer, request, err) {
 		return
 	}
 
@@ -70,6 +82,25 @@ func NotFoundDataError(writer http.ResponseWriter, request *http.Request, err in
 		webResponse := web.WebResponse{
 			Code:   http.StatusNotFound,
 			Status: "NOT FOUND ERROR",
+			Data:   exception.Error,
+		}
+
+		WriteToResponseBody(writer, webResponse)
+		return true
+	} else {
+		return false
+	}
+}
+
+func DataConflictError(writer http.ResponseWriter, request *http.Request, err interface{}) bool {
+	exception, ok := err.(StatusConflictError)
+	if ok {
+		writer.Header().Set("Content-Type", "application/json")
+		writer.WriteHeader(http.StatusNotFound)
+
+		webResponse := web.WebResponse{
+			Code:   http.StatusConflict,
+			Status: "CONFLICT DATA ERROR",
 			Data:   exception.Error,
 		}
 

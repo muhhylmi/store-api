@@ -26,7 +26,7 @@ func NewAuthMiddleware(handler http.Handler, config *config.Configurations) *Aut
 func (middleware *AuthMiddleware) ServeHTTP(writer http.ResponseWriter, request *http.Request) {
 	bearerToken := request.Header.Get("Authorization")
 
-	if strings.HasPrefix(request.RequestURI, "/api/users/") && request.Header.Get("X-API-Key") == middleware.Config.API_KEY {
+	if strings.HasPrefix(request.RequestURI, "/api/users") && request.Header.Get("X-API-Key") == middleware.Config.API_KEY {
 		middleware.Handler.ServeHTTP(writer, request)
 	} else if bearerToken != "" {
 		token := strings.Split(bearerToken, " ")
