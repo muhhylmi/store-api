@@ -83,13 +83,18 @@ func (controller *ProductControllerImpl) FindById(writer http.ResponseWriter, re
 	wrapper.WriteToResponseBody(writer, webResponse)
 }
 
-// func (controller *ProductControllerImpl) FindAll(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
-// 	ProductResponses := controller.ProductService.FindAll(request.Context())
-// 	webResponse := web.WebResponse{
-// 		Code:   200,
-// 		Status: "OK",
-// 		Data:   ProductResponses,
-// 	}
+func (controller *ProductControllerImpl) List(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
+	query := request.URL.Query()
+	productListRequest := web.ProductListRequest{
+		CategoryId: query.Get("category_id"),
+		Keyword:    query.Get("q"),
+	}
+	ProductResponses := controller.ProductService.FindAll(request.Context(), productListRequest)
+	webResponse := web.WebResponse{
+		Code:   200,
+		Status: "OK",
+		Data:   ProductResponses,
+	}
 
-// 	wrapper.WriteToResponseBody(writer, webResponse)
-// }
+	wrapper.WriteToResponseBody(writer, webResponse)
+}

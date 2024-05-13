@@ -21,7 +21,7 @@ type ProductService interface {
 	// Update(ctx context.Context, request web.ProductUpdateRequest) web.ProductResponse
 	// Delete(ctx context.Context, ProductId string)
 	FindById(ctx context.Context, ProductId string) web.ProductResponse
-	// FindAll(ctx context.Context) []web.ProductResponse
+	FindAll(ctx context.Context, req web.ProductListRequest) []*web.ProductResponse
 }
 
 func NewProductService(logger *logger.Logger, ProductRepository repository.ProductRepository,

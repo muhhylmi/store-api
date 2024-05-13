@@ -11,6 +11,7 @@ func NewRouter(productController controller.ProductController, userController co
 	router := httprouter.New()
 
 	// products
+	router.GET("/api/products", productController.List)
 	router.GET("/api/products/:productId", productController.FindById)
 	router.POST("/api/products", productController.Create)
 

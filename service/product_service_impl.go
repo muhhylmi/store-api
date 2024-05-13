@@ -85,19 +85,17 @@ func (service *ProductServiceImpl) FindById(ctx context.Context, productId strin
 		panic(wrapper.NewNotFoundError(err.Error()))
 	}
 
-	return web.ToProductRersponse(*result)
+	return *result
 }
 
-// func (service *ProductServiceImpl) FindAll(ctx context.Context) []web.ProductResponse {
-// 	l := service.Logger.LogWithContext("service", "findAll")
-// 	tx, err := service.DB.Begin()
-// 	if err != nil {
-// 		l.Error(err)
-// 		wrapper.PanicIfError(err)
-// 	}
-// 	defer databases.CommitOrRollback(tx)
+func (service *ProductServiceImpl) FindAll(ctx context.Context, request web.ProductListRequest) []*web.ProductResponse {
+	l := service.Logger.LogWithContext("service", "findAll")
+	err := service.Validate.Struct(request)
+	if err != nil {
+		l.Error(err)
+		exception.PanicIfError(err)
+	}
+	categories := service.ProductRepository.FindAll(ctx, request)
 
-// 	categories := service.ProductRepository.FindAll(ctx, tx)
-
-// 	return web.ToProductRersponses(categories)
-// }
+	return categories
+}

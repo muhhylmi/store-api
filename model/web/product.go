@@ -16,9 +16,16 @@ type ProductUpdateRequest struct {
 }
 
 type ProductResponse struct {
-	Id    string `json:"id"`
-	Name  string `json:"name"`
-	Price int64  `json:"price"`
+	Id           string `json:"id"`
+	Name         string `json:"name"`
+	Price        int64  `json:"price"`
+	CategoryId   string `json:"category_id"`
+	CategoryName string `json:"category_name"`
+}
+
+type ProductListRequest struct {
+	Keyword    string `query:"q"`
+	CategoryId string `query:"category_id"`
 }
 
 func ToProductRersponse(Product domain.Product) ProductResponse {
@@ -29,11 +36,11 @@ func ToProductRersponse(Product domain.Product) ProductResponse {
 	}
 }
 
-func ToProductRersponses(categories []domain.Product) []ProductResponse {
-	var ProductResponses []ProductResponse
-	for _, Product := range categories {
-		ProductResponses = append(ProductResponses, ToProductRersponse(Product))
+func ToProductRersponses(categories []*domain.Product) []ProductResponse {
+	var productResponses []ProductResponse
+	for _, product := range categories {
+		productResponses = append(productResponses, ToProductRersponse(*product))
 	}
 
-	return ProductResponses
+	return productResponses
 }

@@ -2,7 +2,6 @@ package repository
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/muhhylmi/store-api/model/domain"
 	"github.com/muhhylmi/store-api/utils/objects"
@@ -22,8 +21,6 @@ func (repository *CategoryRepositoryImpl) FindAll(ctx context.Context) []*domain
 }
 
 func (repository *CategoryRepositoryImpl) FindById(ctx context.Context, Id string) (*domain.Categories, error) {
-	fmt.Println("============= Category Repo")
-
 	var category *domain.Categories
 	result := repository.DB.Gorm.Where(&domain.Categories{BaseModel: domain.BaseModel{
 		ID: Id,
