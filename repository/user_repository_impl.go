@@ -28,7 +28,7 @@ func (repository *UserRepositoryImpl) FindByUsername(ctx context.Context, userna
 	return data, result.Error
 }
 
-func (repository *UserRepositoryImpl) TopUpBalance(ctx context.Context, cart domain.Users) (domain.Users, error) {
+func (repository *UserRepositoryImpl) AdjustUpBalance(ctx context.Context, cart domain.Users) (domain.Users, error) {
 	result := repository.DB.Gorm.Save(cart)
 	return cart, result.Error
 }

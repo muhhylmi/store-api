@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"errors"
 
 	"github.com/muhhylmi/store-api/model/domain"
 	"github.com/muhhylmi/store-api/model/web"
@@ -36,5 +37,30 @@ func (repository *ShoppingCartRepositoryImpl) FindById(ctx context.Context, Id s
 
 func (repository *ShoppingCartRepositoryImpl) Update(ctx context.Context, cart domain.ShoppingCarts) (domain.ShoppingCarts, error) {
 	result := repository.DB.Gorm.Save(cart)
+	return cart, result.Error
+}
+
+func (repository *ShoppingCartRepositoryImpl) FindPendingByIds(ctx context.Context, Ids []string, auth web.AuthData) ([]domain.ShoppingCarts, error) {
+	var cart []domain.ShoppingCarts
+	result := repository.DB.Gorm.Where(&domain.ShoppingCarts{}).
+		Preload("Product").
+		Where("is_deleted = ? AND id IN (?) AND user_id = ? AND status = ?", false, Ids, auth.UserId, web.PENDING_CART).
+		Find(&cart)
+	return cart, result.Error
+}
+
+func (repository *ShoppingCartRepositoryImpl) UpdateByIds(ctx context.Context, Ids []string, cart domain.ShoppingCarts) (domain.ShoppingCarts, error) {
+	result := repository.DB.Gorm.Model(&domain.ShoppingCarts{}).
+		Where("id IN (?)", Ids).
+		Updates(&domain.ShoppingCarts{
+			BaseModel: domain.BaseModel{
+				UpdatedBy: cart.UpdatedBy,
+				UpdatedAt: cart.UpdatedAt,
+			},
+			Status: cart.Status,
+		})
+	if result.RowsAffected == 0 {
+		return cart, errors.New("no update found")
+	}
 	return cart, result.Error
 }

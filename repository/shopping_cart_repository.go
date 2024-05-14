@@ -19,6 +19,8 @@ type ShoppingCartRepository interface {
 	FindAll(ctx context.Context, req web.ListCartRequest) []*domain.ShoppingCarts
 	FindById(ctx context.Context, Id string) (*domain.ShoppingCarts, error)
 	Update(ctx context.Context, cart domain.ShoppingCarts) (domain.ShoppingCarts, error)
+	FindPendingByIds(ctx context.Context, Ids []string, auth web.AuthData) ([]domain.ShoppingCarts, error)
+	UpdateByIds(ctx context.Context, Ids []string, cart domain.ShoppingCarts) (domain.ShoppingCarts, error)
 }
 
 func NewShoppingCartRepository(logger *logger.Logger, db *databases.DBService) ShoppingCartRepository {

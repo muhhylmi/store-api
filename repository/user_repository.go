@@ -19,9 +19,9 @@ type UserRepository interface {
 	Save(ctx context.Context, user domain.Users) (domain.Users, error)
 	Login(ctx context.Context, request web.LoginRequest) (*domain.Users, error)
 	FindByUsername(ctx context.Context, username string) (*domain.Users, error)
-	FindById(ctx context.Context, username string) (*domain.Users, error)
+	FindById(ctx context.Context, Id string) (*domain.Users, error)
 
-	TopUpBalance(ctx context.Context, req domain.Users) (domain.Users, error)
+	AdjustUpBalance(ctx context.Context, req domain.Users) (domain.Users, error)
 	BeginTransaction(ctx context.Context) (context.Context, *gorm.DB)
 	CommitTransaction(ctx context.Context) error
 	RollbackTransaction(ctx context.Context) error

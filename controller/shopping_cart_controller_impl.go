@@ -94,3 +94,22 @@ func (controller *ShoppingCartControllerImpl) Delete(writer http.ResponseWriter,
 
 	wrapper.WriteToResponseBody(writer, webResponse)
 }
+
+func (controller *ShoppingCartControllerImpl) Checkout(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
+	checkoutRequest := web.CheckoutCartRequest{
+		AuthData: web.AuthData{
+			Role:   request.Header.Get("role"),
+			UserId: request.Header.Get("userId"),
+		},
+	}
+	wrapper.ReadJsonFromRequest(request, &checkoutRequest)
+
+	response := controller.Service.Checkout(request.Context(), checkoutRequest)
+	webResponse := web.WebResponse{
+		Code:   200,
+		Status: "OK",
+		Data:   response,
+	}
+
+	wrapper.WriteToResponseBody(writer, webResponse)
+}

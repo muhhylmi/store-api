@@ -89,10 +89,16 @@ func (service *UserServiceImpl) TopUpBalance(ctx context.Context, request web.To
 	checkUser.Balance += request.Balance
 
 	ctx, _ = service.Repository.BeginTransaction(ctx)
-	if _, err := service.Repository.TopUpBalance(ctx, *checkUser); err != nil {
+	if _, err := service.Repository.AdjustUpBalance(ctx, *checkUser); err != nil {
 		service.Repository.RollbackTransaction(ctx)
 		l.Error("cannot top up balance")
 		panic(wrapper.NewStatuConflictError("cannot top up balance"))
+	}
+
+	if errCommit := service.Repository.CommitTransaction(ctx); errCommit != nil {
+		service.Repository.RollbackTransaction(ctx)
+		l.Error(errCommit.Error())
+		panic(wrapper.NewStatuConflictError(errCommit.Error()))
 	}
 
 	return web.TopUpResponse{

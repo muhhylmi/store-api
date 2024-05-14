@@ -56,6 +56,17 @@ type DeleteCartRequest struct {
 	ShoppingCartId string `params:"shopping_cart_id"`
 }
 
+type CheckoutCartRequest struct {
+	AuthData
+
+	ShoppingCartIds []string `json:"shoppingCartIds"`
+}
+
+type CheckoutResponse struct {
+	ShoppingCartIds []string `json:"shoopingCartIds"`
+	Message         string   `json:"message"`
+}
+
 func ToProductIds(req []CartItem) []string {
 	result := []string{}
 	for _, item := range req {
@@ -116,4 +127,12 @@ func ToUpdateShopingCartResponse(cart domain.ShoppingCarts) ShopingCartResponse 
 		ProductId:      cart.ProductId,
 		Qty:            cart.Qty,
 	}
+}
+
+func GetTotalPrice(carts []domain.ShoppingCarts) int64 {
+	result := int64(0)
+	for _, cart := range carts {
+		result += cart.Product.Price * int64(cart.Qty)
+	}
+	return result
 }

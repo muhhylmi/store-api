@@ -50,7 +50,7 @@ func main() {
 	userController := controller.NewUserController(logger, userService)
 	// cart domain
 	cartRepo := repository.NewShoppingCartRepository(logger, dbService)
-	cartService := service.NewShoppingCartService(logger, cartRepo, productRepository, validate)
+	cartService := service.NewShoppingCartService(logger, cartRepo, productRepository, userRepository, validate)
 	cartController := controller.NewShoppingCartController(logger, cartService)
 
 	// running application
