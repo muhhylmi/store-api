@@ -1,9 +1,10 @@
 package app
 
 import (
+	"go-store-api/controller"
+	"go-store-api/utils/wrapper"
+
 	"github.com/julienschmidt/httprouter"
-	"github.com/muhhylmi/store-api/controller"
-	"github.com/muhhylmi/store-api/utils/wrapper"
 )
 
 func NewRouter(productController controller.ProductController, userController controller.UserController,

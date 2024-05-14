@@ -4,8 +4,9 @@ import (
 	"fmt"
 	"net/http"
 
+	"go-store-api/model/web"
+
 	"github.com/go-playground/validator/v10"
-	"github.com/muhhylmi/store-api/model/web"
 )
 
 type NotFoundError struct {

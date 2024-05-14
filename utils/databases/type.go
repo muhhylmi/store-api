@@ -1,7 +1,8 @@
 package databases
 
 import (
-	"github.com/muhhylmi/store-api/utils/logger"
+	"go-store-api/utils/logger"
+
 	"gorm.io/gorm"
 )
 

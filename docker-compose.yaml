@@ -19,10 +19,10 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: mygolangapp
+    container_name: my-store-api
     env_file: .sample.env
     ports:
-      - "1234:1234"
+      - "3000:3000"
     depends_on:
       - postgres
     networks:

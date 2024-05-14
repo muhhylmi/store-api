@@ -4,9 +4,9 @@ import (
 	"context"
 	"errors"
 
-	"github.com/muhhylmi/store-api/model/domain"
-	"github.com/muhhylmi/store-api/model/web"
-	"github.com/muhhylmi/store-api/utils/objects"
+	"go-store-api/model/domain"
+	"go-store-api/model/web"
+	"go-store-api/utils/objects"
 )
 
 func (repository *ShoppingCartRepositoryImpl) Save(ctx context.Context, carts []domain.ShoppingCarts) ([]domain.ShoppingCarts, error) {

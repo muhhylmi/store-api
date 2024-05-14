@@ -1,4 +1,4 @@
-module github.com/muhhylmi/store-api
+module go-store-api
 
 go 1.21.1
 

@@ -3,11 +3,12 @@ package controller
 import (
 	"net/http"
 
+	"go-store-api/model/web"
+	"go-store-api/service"
+	"go-store-api/utils/logger"
+	"go-store-api/utils/wrapper"
+
 	"github.com/julienschmidt/httprouter"
-	"github.com/muhhylmi/store-api/model/web"
-	"github.com/muhhylmi/store-api/service"
-	"github.com/muhhylmi/store-api/utils/logger"
-	"github.com/muhhylmi/store-api/utils/wrapper"
 )
 
 type ProductControllerImpl struct {

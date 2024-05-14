@@ -3,8 +3,8 @@ package repository
 import (
 	"context"
 
-	"github.com/muhhylmi/store-api/model/domain"
-	"github.com/muhhylmi/store-api/utils/objects"
+	"go-store-api/model/domain"
+	"go-store-api/utils/objects"
 )
 
 func (repository *CategoryRepositoryImpl) Save(ctx context.Context, category domain.Categories) (domain.Categories, error) {

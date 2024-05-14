@@ -55,6 +55,9 @@ erDiagram
 4. Run the Migration using `go run migration/migration.go`
 5. Run app using `go run main.go`
 
+## How to Run Using Docker Compose
+
+
 # REST API
 
 ## Register User

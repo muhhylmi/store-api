@@ -4,11 +4,11 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/muhhylmi/store-api/model/web"
-	"github.com/muhhylmi/store-api/utils/config"
-	"github.com/muhhylmi/store-api/utils/jwt"
-	"github.com/muhhylmi/store-api/utils/objects"
-	"github.com/muhhylmi/store-api/utils/wrapper"
+	"go-store-api/model/web"
+	"go-store-api/utils/config"
+	"go-store-api/utils/jwt"
+	"go-store-api/utils/objects"
+	"go-store-api/utils/wrapper"
 )
 
 type AuthMiddleware struct {

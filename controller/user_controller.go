@@ -3,9 +3,10 @@ package controller
 import (
 	"net/http"
 
+	"go-store-api/service"
+	"go-store-api/utils/logger"
+
 	"github.com/julienschmidt/httprouter"
-	"github.com/muhhylmi/store-api/service"
-	"github.com/muhhylmi/store-api/utils/logger"
 )
 
 type UserControllerImpl struct {

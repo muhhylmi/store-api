@@ -4,9 +4,10 @@ import (
 	"fmt"
 	"time"
 
+	"go-store-api/model/domain"
+	"go-store-api/utils/config"
+
 	"github.com/golang-jwt/jwt"
-	"github.com/muhhylmi/store-api/model/domain"
-	"github.com/muhhylmi/store-api/utils/config"
 )
 
 type ClaimToken struct {

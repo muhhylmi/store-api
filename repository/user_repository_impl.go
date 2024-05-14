@@ -3,9 +3,10 @@ package repository
 import (
 	"context"
 
-	"github.com/muhhylmi/store-api/model/domain"
-	"github.com/muhhylmi/store-api/model/web"
-	"github.com/muhhylmi/store-api/utils/objects"
+	"go-store-api/model/domain"
+	"go-store-api/model/web"
+	"go-store-api/utils/objects"
+
 	"gorm.io/gorm"
 )
 

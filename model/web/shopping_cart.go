@@ -1,9 +1,10 @@
 package web
 
 import (
+	"go-store-api/model/domain"
+	"go-store-api/utils/objects"
+
 	"github.com/google/uuid"
-	"github.com/muhhylmi/store-api/model/domain"
-	"github.com/muhhylmi/store-api/utils/objects"
 )
 
 type ShopingCartCreateRequest struct {

@@ -3,10 +3,10 @@ package repository
 import (
 	"context"
 
-	"github.com/muhhylmi/store-api/model/domain"
-	"github.com/muhhylmi/store-api/model/web"
-	"github.com/muhhylmi/store-api/utils/databases"
-	"github.com/muhhylmi/store-api/utils/logger"
+	"go-store-api/model/domain"
+	"go-store-api/model/web"
+	"go-store-api/utils/databases"
+	"go-store-api/utils/logger"
 )
 
 type ShoppingCartRepositoryImpl struct {

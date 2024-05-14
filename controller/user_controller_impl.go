@@ -3,9 +3,10 @@ package controller
 import (
 	"net/http"
 
+	"go-store-api/model/web"
+	"go-store-api/utils/wrapper"
+
 	"github.com/julienschmidt/httprouter"
-	"github.com/muhhylmi/store-api/model/web"
-	"github.com/muhhylmi/store-api/utils/wrapper"
 )
 
 func (controller *UserControllerImpl) Create(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {

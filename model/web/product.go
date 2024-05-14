@@ -1,6 +1,6 @@
 package web
 
-import "github.com/muhhylmi/store-api/model/domain"
+import "go-store-api/model/domain"
 
 type ProductCreateRequest struct {
 	AuthData

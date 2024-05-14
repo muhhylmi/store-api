@@ -4,16 +4,17 @@ import (
 	"fmt"
 	"net/http"
 
-	_ "github.com/lib/pq"
-	"github.com/muhhylmi/store-api/app"
-	"github.com/muhhylmi/store-api/controller"
-	"github.com/muhhylmi/store-api/utils/config"
-	"github.com/muhhylmi/store-api/utils/databases"
-	"github.com/muhhylmi/store-api/utils/logger"
-	"github.com/muhhylmi/store-api/utils/middleware"
+	app "go-store-api/bin"
+	"go-store-api/controller"
+	"go-store-api/utils/config"
+	"go-store-api/utils/databases"
+	"go-store-api/utils/logger"
+	"go-store-api/utils/middleware"
 
-	"github.com/muhhylmi/store-api/repository"
-	"github.com/muhhylmi/store-api/service"
+	_ "github.com/lib/pq"
+
+	"go-store-api/repository"
+	"go-store-api/service"
 
 	"github.com/go-playground/validator/v10"
 )

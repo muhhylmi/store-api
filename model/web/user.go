@@ -1,6 +1,6 @@
 package web
 
-import "github.com/muhhylmi/store-api/model/domain"
+import "go-store-api/model/domain"
 
 type UserCreateRequest struct {
 	Username string `validate:"required,min=1,max=100" json:"username"`
