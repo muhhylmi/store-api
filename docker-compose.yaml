@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:latest
+    container_name: mypostgres
+    environment:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: password
+          POSTGRES_DB: store-api
+    ports:
+      - "5462:5432"
+    networks:
+      - mynetwork
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  myapp:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: my-store-api
+    env_file: .sample.env
+    ports:
+      - "3000:3000"
+    depends_on:
+      - postgres
+    networks:
+      - mynetwork
+
+networks:
+  mynetwork:
+    name: mynetwork
+
+volumes:
+  postgres_data:
