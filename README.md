@@ -56,7 +56,11 @@ erDiagram
 5. Run app using `go run main.go`
 
 ## How to Run Using Docker Compose
-
+1. Clone the project using `git clone [URL]` 
+2. Create env file for docker compose `.sample.env` already exists for the sample
+3. Run Command `docker compose up`
+4. Create Migration `edit migration db URI and forwarded port` in **migration/migration.go**
+5. App run properly
 
 # REST API
 
