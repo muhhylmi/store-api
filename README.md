@@ -1,5 +1,5 @@
 # Store-Api Using Golang
-RestfullApi using golang httpRouter and Postgres as Database, This Project Using Layer Architecture:
+Simple RestfullApi using golang httpRouter and Postgres as Database, This Project Using Layer Architecture:
 1. Controller
 2. Service
 3. Repository
@@ -48,6 +48,10 @@ erDiagram
 3. shopping cart
 4. product category
 
+## What Implemented in This Repo?
+1. restfull api using httprouter
+2. integration with postgres using [GORM](https://gorm.io/)
+
 ## How to Run This Project
 1. Clone the project using `git clone [URL]` 
 2. Create Postgres Database `store-api`
@@ -60,7 +64,8 @@ erDiagram
 2. Create env file for docker compose `.sample.env` already exists for the sample
 3. Run Command `docker compose up`
 4. Create Migration `edit migration db URI and forwarded port` in **migration/migration.go**
-5. App run properly
+5. Run the Migration using `go run migration/migration.go`
+6. App run properly
 
 # REST API
 
@@ -172,3 +177,37 @@ Only User With Role `ADMIN` can access this API
     curl --location 'localhost:3000/api/shopping-cart?status=PENDING' \
     --header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MTU1OTA5MjgsImlkIjoiMTM2YzRmNDEtZmM5ZS00NWIyLWJhMGQtZTk0NjU0OTUwNjIwIiwicm9sZSI6IkFETUlOIiwidXNlcm5hbWUiOiJhZG1pbiJ9.EHmnqyqcnxfoCHil-fXo6XEYzYgmKnRwPtUGzQcx-kA'
 
+# Checkout Cart
+### Request 
+
+`PATCH localhost:3000/api/shopping-cart/checkout`
+
+    curl --location --request PATCH 'localhost:3000/api/shopping-cart/checkout' \
+    --header 'Content-Type: application/json' \
+    --header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MTU2NTU3MzIsImlkIjoiMTM2YzRmNDEtZmM5ZS00NWIyLWJhMGQtZTk0NjU0OTUwNjIwIiwicm9sZSI6IkFETUlOIiwidXNlcm5hbWUiOiJhZG1pbiJ9.BHWG4isucwQKJh4IPaVD_7jjf0hbMSptfNlJqAzaNzc' \
+    --data '{
+        "shoppingCartIds": [
+            "59cd59a7-1353-4316-bda5-0fa43d26a9fa"
+        ]
+    }'
+### Checkout Workflow
+```mermaid
+sequenceDiagram
+    Client->>Cart: Update Status Cart
+    Cart->>DB:Start DB Transaction
+    Cart->>DB: find cart
+    alt cart not found
+        Cart->>DB: Rollback transaction
+    else cart found
+        Cart->>User: Checking User Balance
+    alt balance not enough
+    Cart->>DB: Rollback data
+    else balance enough
+    Cart->>DB: update status cart
+    Cart->>User: adjust user balance
+    Cart->>DB: commit if succes and rollback if error
+    end
+    end
+    DB-->>Cart:response commit success or rollback
+    Cart-->>Client:response data
+```
